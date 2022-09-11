@@ -1,0 +1,186 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Api de gestão de restaurante japonês",
+    "description": "Essa API tem como objetivo gerir no sistema, os usuários como operadores, administradores, clientes e entregadores, assim como os pedidos que os clientes fazem, tanto como entrega na casa do cliente quanto no estabelecimento",
+    "termsOfService": "http://localhost:3030/sushi/terms",
+    "contact": {
+      "email": "ruanpmp@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3030/sushi/",
+      "description": "Api de teste"
+    }
+  ],
+  "paths": {
+    "/menu": {
+      "get": {
+        "summary": "Leitura de produtos no cardápio",
+        "description": "Essa rota lê os produtos do cardápio, a leitura dos produtos completa é apenas disponível para usuários 'admin e 'operador', ao ser acessado por usuários 'cliente' ou 'entregador' ou sem autenticação, apenas cardápios ativos com alguns dados ocultos",
+        "tags": ["Menu"],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "nome do produto",
+            "required": false
+          },
+          {
+            "name": "ingredients",
+            "in": "query",
+            "description": "ingredientes do produto",
+            "required": false
+          },
+          {
+            "name": "subtitle",
+            "in": "query",
+            "description": "subtitulo do produto",
+            "required": false
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "preço do produto",
+            "required": false
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "tipo do produto",
+            "required": false
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "situação do produto",
+            "required": false
+          },
+          {
+            "name": "createdAt",
+            "in": "query",
+            "description": "data de criação do produto",
+            "required": false
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "Menu not found"
+          },
+          "500": {
+            "description": "Internal Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cadastro de cardápios",
+        "description": "Essa rota cadastra os cardápios, rota disponível apenas para usuários 'admin e 'operador'",
+        "tags": ["Menu"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Menu"
+              },
+              "examples": {
+                "menu": {
+                  "value": {
+                    "name": "salmão grelhado",
+                    "subtitle": "salmão suculento grelhado a base de molho shoyo",
+                    "ingredients": "salmão, molho shoyo e sal",
+                    "price": 20,
+                    "type": "grelhados",
+                    "url_image": "https://img.itdg.com.br/tdg/images/recipes/000/043/297/324510/324510_original.jpg?w=1200"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "User has to send data of a new menu"
+          },
+          "401": {
+            "description": "Acess Denied"
+          },
+          "500": {
+            "description": "Internal Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Menu": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          },
+          "url_image": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
